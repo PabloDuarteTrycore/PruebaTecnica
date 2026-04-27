@@ -496,10 +496,25 @@ class TestCalculateProjectEVM:
             actual_progress=Decimal("40"),
             actual_cost=Decimal("600"),
         )
-        # Verify key consolidated metrics match single activity
-        assert project_result.total_bac == activity_result.pv + activity_result.sv
+        # Verify consolidated metrics match the single activity metrics
+        assert project_result.total_bac == Decimal("1000")
+        assert project_result.total_pv == activity_result.pv
         assert project_result.total_ev == activity_result.ev
         assert project_result.total_ac == Decimal("600")
+        assert project_result.cv == activity_result.cv
+        assert project_result.sv == activity_result.sv
+        assert project_result.cpi == activity_result.cpi
+        assert project_result.spi == activity_result.spi
+        assert project_result.eac == activity_result.eac
+        assert project_result.vac == activity_result.vac
+        assert (
+            project_result.cpi_interpretation
+            == activity_result.cpi_interpretation
+        )
+        assert (
+            project_result.spi_interpretation
+            == activity_result.spi_interpretation
+        )
 
     def test_multiple_activities_consolidation(self):
         """Test consolidation of multiple activities."""
