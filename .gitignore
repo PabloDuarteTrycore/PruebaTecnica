@@ -1,0 +1,19 @@
+# Docker
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+build/
+.eslintcache
+
+# DB
+postgres_data/
+
+# OS
+.DS_Store
