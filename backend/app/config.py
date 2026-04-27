@@ -13,6 +13,15 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JSON_SORT_KEYS = False
+    SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-dev-key")
+
+    # flask-smorest / OpenAPI
+    API_TITLE = "EVM Project Tracker API"
+    API_VERSION = "v1"
+    OPENAPI_VERSION = "3.0.3"
+    OPENAPI_URL_PREFIX = "/"
+    OPENAPI_SWAGGER_UI_PATH = "/api-docs"
+    OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
 
 class DevelopmentConfig(Config):
