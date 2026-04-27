@@ -12,6 +12,7 @@ activity_repo = ActivityRepository()
 
 def list_activities_service(project_id) -> list[dict] | None:
     """List all activities for a project."""
+    project_id = str(project_id)
     project = project_repo.fetch_project_by_id(project_id)
     if project is None:
         return None
@@ -21,6 +22,7 @@ def list_activities_service(project_id) -> list[dict] | None:
 
 def create_activity_service(project_id, data: dict) -> dict | None:
     """Create a new activity in a project."""
+    project_id = str(project_id)
     project = project_repo.fetch_project_by_id(project_id)
     if project is None:
         return None
@@ -30,7 +32,7 @@ def create_activity_service(project_id, data: dict) -> dict | None:
 
 def update_activity_service(activity_id, fields: dict) -> dict | None:
     """Update activity fields."""
-    activity = activity_repo.fetch_activity_by_id(activity_id)
+    activity = activity_repo.fetch_activity_by_id(str(activity_id))
     if activity is None:
         return None
     updated = activity_repo.update_activity_fields(activity, fields)
@@ -39,7 +41,7 @@ def update_activity_service(activity_id, fields: dict) -> dict | None:
 
 def delete_activity_service(activity_id) -> bool:
     """Delete an activity."""
-    activity = activity_repo.fetch_activity_by_id(activity_id)
+    activity = activity_repo.fetch_activity_by_id(str(activity_id))
     if activity is None:
         return False
     activity_repo.remove_activity(activity)

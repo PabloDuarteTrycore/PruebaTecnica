@@ -116,7 +116,7 @@ def create_project_service(name: str, description: str | None) -> dict:
 
 def get_project_detail_service(project_id) -> dict | None:
     """Get the complete detail of a project with all its activities."""
-    project = project_repo.fetch_project_by_id(project_id)
+    project = project_repo.fetch_project_by_id(str(project_id))
     if project is None:
         return None
     return _build_project_dict(project)
@@ -124,7 +124,7 @@ def get_project_detail_service(project_id) -> dict | None:
 
 def update_project_service(project_id, fields: dict) -> dict | None:
     """Update project fields."""
-    project = project_repo.fetch_project_by_id(project_id)
+    project = project_repo.fetch_project_by_id(str(project_id))
     if project is None:
         return None
     updated_project = project_repo.update_project_fields(project, fields)
@@ -133,7 +133,7 @@ def update_project_service(project_id, fields: dict) -> dict | None:
 
 def delete_project_service(project_id) -> bool:
     """Delete a project and all its activities."""
-    project = project_repo.fetch_project_by_id(project_id)
+    project = project_repo.fetch_project_by_id(str(project_id))
     if project is None:
         return False
     project_repo.remove_project(project)
