@@ -3,6 +3,7 @@ Flask application factory.
 """
 
 from flask import Flask
+from flask_cors import CORS
 
 from app.config import Config, config
 from app.extensions import api, db, migrate
@@ -28,6 +29,7 @@ def create_app(config_name: str | type[Config] = "development") -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
     api.init_app(app)
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}})
 
     from app.errors.handlers import register_error_handlers
 
