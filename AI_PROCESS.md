@@ -1,14 +1,18 @@
 # Documento del proceso
 
 ## Herramientas IA
-```
+------
 
 ChatGPT
 Cloud
 Gemini
 Copilot
 
-```
+------
+
+Se eligieron estas por su desempeño en el codigo y por el uso de capa gratuita
+
+------
 
 ## Prmpts
 ------
