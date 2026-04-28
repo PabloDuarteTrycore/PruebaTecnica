@@ -7,7 +7,7 @@ import StatusBadge from '../components/ui/StatusBadge'
 
 const ProjectsPage = () => {
   const navigate = useNavigate()
-  const { projects, isLoading, error, createProject, editProject } = useProjects()
+  const { projects, isLoading, error, createProject, editProject, deleteProject } = useProjects()
 
   const [showForm, setShowForm] = useState(false)
   const [name, setName] = useState('')
@@ -47,6 +47,20 @@ const ProjectsPage = () => {
     setDescription(project.description || '')
     setFormError('')
     setShowForm(true)
+  }
+
+  const handleDeleteClick = async (project) => {
+    const confirmed = window.confirm(
+      `¿Eliminar el proyecto "${project.name}"? Esta acción no se puede deshacer.`
+    )
+
+    if (!confirmed) return
+
+    await deleteProject(project.id)
+
+    if (editingProjectId === project.id) {
+      resetForm()
+    }
   }
 
   const isEditing = editingProjectId !== null
@@ -135,6 +149,9 @@ const ProjectsPage = () => {
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <Button variant="secondary" onClick={() => handleEditClick(project)}>
                       Editar
+                    </Button>
+                    <Button variant="danger" onClick={() => handleDeleteClick(project)}>
+                      Eliminar
                     </Button>
                     <Button onClick={() => navigate(`/projects/${project.id}`)}>
                       Ver detalle

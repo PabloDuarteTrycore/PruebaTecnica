@@ -3,6 +3,7 @@ import {
   getAllProjects,
   createProject as apiCreateProject,
   updateProject as apiUpdateProject,
+  deleteProject as apiDeleteProject,
 } from '../api/evmApi'
 
 export const useProjects = () => {
@@ -65,6 +66,23 @@ export const useProjects = () => {
     }
   }
 
+  const deleteProject = async (projectId) => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      await apiDeleteProject(projectId)
+      await fetchProjects()
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data?.message || 'Error al eliminar proyecto')
+      } else {
+        setError('No se puede conectar con el servidor')
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return {
     projects,
     isLoading,
@@ -72,5 +90,6 @@ export const useProjects = () => {
     fetchProjects,
     createProject,
     editProject,
+    deleteProject,
   }
 }
