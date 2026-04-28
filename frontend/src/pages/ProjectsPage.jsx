@@ -7,25 +7,49 @@ import StatusBadge from '../components/ui/StatusBadge'
 
 const ProjectsPage = () => {
   const navigate = useNavigate()
-  const { projects, isLoading, error, createProject } = useProjects()
+  const { projects, isLoading, error, createProject, editProject } = useProjects()
 
   const [showForm, setShowForm] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [formError, setFormError] = useState('')
+  const [editingProjectId, setEditingProjectId] = useState(null)
 
-  const handleCreate = async (e) => {
+  const resetForm = () => {
+    setName('')
+    setDescription('')
+    setFormError('')
+    setEditingProjectId(null)
+    setShowForm(false)
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!name.trim()) {
       setFormError('El nombre del proyecto es requerido')
       return
     }
+
     setFormError('')
-    await createProject(name.trim(), description.trim())
-    setName('')
-    setDescription('')
-    setShowForm(false)
+
+    if (editingProjectId) {
+      await editProject(editingProjectId, name.trim(), description.trim())
+    } else {
+      await createProject(name.trim(), description.trim())
+    }
+
+    resetForm()
   }
+
+  const handleEditClick = (project) => {
+    setEditingProjectId(project.id)
+    setName(project.name || '')
+    setDescription(project.description || '')
+    setFormError('')
+    setShowForm(true)
+  }
+
+  const isEditing = editingProjectId !== null
 
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: '1.5rem' }}>
@@ -38,10 +62,12 @@ const ProjectsPage = () => {
 
       {showForm && (
         <form
-          onSubmit={handleCreate}
+          onSubmit={handleSubmit}
           style={{ border: '1px solid #e5e7eb', borderRadius: '6px', padding: '1rem', marginBottom: '1.5rem' }}
         >
-          <h3 style={{ marginTop: 0 }}>Nuevo proyecto</h3>
+          <h3 style={{ marginTop: 0 }}>
+            {isEditing ? 'Editar proyecto' : 'Nuevo proyecto'}
+          </h3>
           <div style={{ marginBottom: '0.75rem' }}>
             <label>Nombre del proyecto</label>
             <input
@@ -52,7 +78,7 @@ const ProjectsPage = () => {
             {formError && <span style={{ color: '#dc2626', fontSize: '0.8rem' }}>{formError}</span>}
           </div>
           <div style={{ marginBottom: '1rem' }}>
-            <label>Descripción (opcional)</label>
+            <label>Descripcion (opcional)</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -61,8 +87,10 @@ const ProjectsPage = () => {
             />
           </div>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <Button type="submit" disabled={isLoading}>Crear</Button>
-            <Button variant="secondary" onClick={() => setShowForm(false)}>Cancelar</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isEditing ? 'Guardar cambios' : 'Crear'}
+            </Button>
+            <Button variant="secondary" onClick={resetForm}>Cancelar</Button>
           </div>
         </form>
       )}
@@ -78,33 +106,40 @@ const ProjectsPage = () => {
           <thead>
             <tr style={{ backgroundColor: '#f3f4f6' }}>
               <th style={th}>Nombre</th>
-              <th style={th}>Descripción</th>
+              <th style={th}>Descripcion</th>
               <th style={th}>CPI</th>
               <th style={th}>SPI</th>
-              <th style={th}></th>
+              <th style={th}>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {projects.map((p) => (
-              <tr key={p.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                <td style={td}>{p.name}</td>
-                <td style={td}>{p.description || '—'}</td>
+            {projects.map((project) => (
+              <tr key={project.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                <td style={td}>{project.name}</td>
+                <td style={td}>{project.description || '-'}</td>
                 <td style={td}>
                   <StatusBadge
-                    interpretation={p.evm?.cpi_interpretation}
+                    interpretation={project.evm?.cpi_interpretation}
                     label="CPI"
-                    value={p.evm?.cpi ? parseFloat(p.evm.cpi).toFixed(2) : null}
+                    value={project.evm?.cpi ? parseFloat(project.evm.cpi).toFixed(2) : null}
                   />
                 </td>
                 <td style={td}>
                   <StatusBadge
-                    interpretation={p.evm?.spi_interpretation}
+                    interpretation={project.evm?.spi_interpretation}
                     label="SPI"
-                    value={p.evm?.spi ? parseFloat(p.evm.spi).toFixed(2) : null}
+                    value={project.evm?.spi ? parseFloat(project.evm.spi).toFixed(2) : null}
                   />
                 </td>
                 <td style={td}>
-                  <Button onClick={() => navigate(`/projects/${p.id}`)}>Ver detalle</Button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Button variant="secondary" onClick={() => handleEditClick(project)}>
+                      Editar
+                    </Button>
+                    <Button onClick={() => navigate(`/projects/${project.id}`)}>
+                      Ver detalle
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}
